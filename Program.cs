@@ -1,3 +1,4 @@
+using PackardJAllForOneWebApi.Services;
 using PackardJAllForOneWebApi.Services.AskingQuestions;
 using PackardJAllForOneWebApi.Services.GreaterOrLess;
 using PackardJAllForOneWebApi.Services.MadLibs;
@@ -14,8 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddCors(option => {
+    option.AddPolicy("CorsPolicy",
+                    builder => {
+                        builder.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowAnyOrigin();
+                    }
+    );
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ISayHelloService, SayHelloService>();
 builder.Services.AddScoped<ISumTwoNumbersService, SumTwoNumbersService>();
 builder.Services.AddScoped<IAskingQuestionsService, AskingQuestionsService>();
 builder.Services.AddScoped<IGreaterOrLessService, GreaterOrLessService>();
@@ -38,6 +51,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors("CorsPolicy");
 
 app.MapControllers();
 
